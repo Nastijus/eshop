@@ -172,7 +172,7 @@
 
             <div class="col-sm-4 col-lg-3 text-center text-sm-start">
                 <div class="main-logo">
-                    <a href="index.html">
+                    <a href="{% url 'index' %}">
                         <img src="{% static 'images/logo.png' %}" alt="logo" class="img-fluid">
                     </a>
                 </div>
@@ -180,8 +180,8 @@
 
             <div class="col-sm-6 offset-sm-2 offset-md-0 col-lg-5 d-none d-lg-block">
                 <div class="search-bar border rounded-2 px-3 border-dark-subtle">
-                    <form id="search-form" class="text-center d-flex align-items-center" action="" method="">
-                        <input type="text" class="form-control border-0 bg-transparent"
+                    <form id="search-form" class="text-center d-flex align-items-center" action="{% url 'search' %}?query={{ query }}" method="get">
+                        <input name="query" type="text" class="form-control border-0 bg-transparent"
                                placeholder="Search products"/>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                             <path fill="currentColor"
@@ -268,7 +268,7 @@
 
                     <ul class="navbar-nav menu-list list-unstyled d-flex gap-md-3 mb-0">
                         <li class="nav-item">
-                            <a href="index.html" class="nav-link active">Home</a>
+                            <a href="{% url 'index' %}" class="nav-link active">Home</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" role="button" id="pages" data-bs-toggle="dropdown"
@@ -291,21 +291,38 @@
                             </ul>
                         </li>
                         <li class="nav-item">
-                            <a href="index.html" class="nav-link">Shop</a>
+                            <a href="{% url 'shop' %}" class="nav-link">Shop</a>
                         </li>
                         <li class="nav-item">
-                            <a href="index.html" class="nav-link">Blog</a>
+                            <a href="{% url 'index' %}" class="nav-link">Blog</a>
                         </li>
                         <li class="nav-item">
-                            <a href="index.html" class="nav-link">Contact</a>
+                            <a href="{% url 'index' %}" class="nav-link">Contact</a>
+                        </li>
+                        {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <form method="post" action="{% url 'logout' %}">
+                                {% csrf_token %}
+                                <input type="submit" value="Logout" class="nav-link"/>
+                            </form>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                            <a href="{% url 'login' %}" class="nav-link">Login</a>
                         </li>
                         <li class="nav-item">
-                            <a href="index.html" class="nav-link">Others</a>
+                            <a href="{% url 'index' %}" class="nav-link">Registration</a>
                         </li>
+                        {% endif %}
                     </ul>
 
                     <div class="d-none d-lg-flex align-items-end">
                         <ul class="d-flex justify-content-end list-unstyled m-0">
+                            {% if user.is_authenticated %}
+                            <li>
+                                {{ user.get_username }}
+                            </li>
+                            {% endif %}
                             <li>
                                 <a href="index.html" class="mx-3">
                                     <iconify-icon icon="healthicons:person" class="fs-4"></iconify-icon>
@@ -579,33 +596,33 @@
 
             <div class="col-md-3">
                 <div class="footer-menu">
-                    <img src="{% static 'images/logo.png' %}" alt="logo">
+                    <img src="{% static 'images/logo.png' %}" alt="logo" class="img-fluid">
                     <p class="blog-paragraph fs-6 mt-3">Subscribe to our newsletter to get updates about our grand
                         offers.</p>
                     <div class="social-links">
                         <ul class="d-flex list-unstyled gap-2">
                             <li class="social">
-                                <a href="#">
+                                <a href="https://www.facebook.com/">
                                     <iconify-icon class="social-icon" icon="ri:facebook-fill"></iconify-icon>
                                 </a>
                             </li>
                             <li class="social">
-                                <a href="#">
+                                <a href="https://x.com/">
                                     <iconify-icon class="social-icon" icon="ri:twitter-fill"></iconify-icon>
                                 </a>
                             </li>
                             <li class="social">
-                                <a href="#">
+                                <a href="https://www.pinterest.com/">
                                     <iconify-icon class="social-icon" icon="ri:pinterest-fill"></iconify-icon>
                                 </a>
                             </li>
                             <li class="social">
-                                <a href="#">
+                                <a href="https://www.instagram.com/">
                                     <iconify-icon class="social-icon" icon="ri:instagram-fill"></iconify-icon>
                                 </a>
                             </li>
                             <li class="social">
-                                <a href="#">
+                                <a href="https://www.youtube.com/">
                                     <iconify-icon class="social-icon" icon="ri:youtube-fill"></iconify-icon>
                                 </a>
                             </li>
@@ -619,7 +636,7 @@
                     <h3>Quick Links</h3>
                     <ul class="menu-list list-unstyled">
                         <li class="menu-item">
-                            <a href="#" class="nav-link">Home</a>
+                            <a href="{% url 'index' %}" class="nav-link">Home</a>
                         </li>
                         <li class="menu-item">
                             <a href="#" class="nav-link">About us</a>
