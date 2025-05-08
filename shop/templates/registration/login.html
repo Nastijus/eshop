@@ -1,33 +1,42 @@
 {% extends "base.html" %}
 
 {% block content %}
-
+{% load static %}
   {% if form.errors %}
+  <div class="row my-2 py-0">
     <p>Login error, please try again!</p>
+  </div>
   {% endif %}
-  
   {% if next %}
     {% if user.is_authenticated %}
+    <div class="row my-2 py-0">
       <p>You do not have access to this information. You need to log in.</p>
+    </div>
     {% endif %}
   {% endif %}
-  
-  <form method="post" action="{% url 'login' %}">
-    {% csrf_token %}
-    <table>
-      <tr>
-        <td>User: </td>
-        <td>{{ form.username }}</td>
-      </tr>
-      <tr>
-        <td>Password: </td>
-        <td>{{ form.password }}</td>
-      </tr>
-    </table>
-    <input type="submit" value="Prisijungti" />
-    <input type="hidden" name="next" value="{{ next }}" />
-  </form>
-  
-  <p><a href="{% url 'password_reset' %}">Forgot your password?</a></p>
-  
+  <section id="register" style="background: url('{% static 'images/background-img.png' %}') no-repeat;">
+    <div class="container ">
+        <div class="row my-2 py-0">
+            <div class="offset-md-3 col-md-6 my-5 ">
+              <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                <table>
+                  <tr>
+                    <td>User: </td>
+                    <td>{{ form.username }}</td>
+                  </tr>
+                  <tr>
+                    <td>Password: </td>
+                    <td>{{ form.password }}</td>
+                  </tr>
+                </table>
+                <input type="submit" value="Login" />
+                <input type="hidden" name="next" value="{{ next }}" />
+              </form>
+              <p><a href="{% url 'password_reset' %}">Forgot your password?</a></p>
+            </div>
+        </div>
+    </div>
+</section>
+
 {% endblock %}

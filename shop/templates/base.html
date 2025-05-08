@@ -157,9 +157,11 @@
                 Search
             </h4>
             <div class="search-bar border rounded-2 border-dark-subtle">
-                <form id="search-form" class="text-center d-flex align-items-center" action="" method="">
-                    <input type="text" class="form-control border-0 bg-transparent" placeholder="Search Here"/>
-                    <iconify-icon icon="tabler:search" class="fs-4 me-3"></iconify-icon>
+                <form id="search-form" class="text-center d-flex align-items-center" action="{% url 'search' %}?query={{ query }}" method="get">
+                    <input name="query" type="text" class="form-control border-0 bg-transparent" placeholder="Search Here"/>
+                    <button type="submit" class="btn border-0 bg-transparent p-0">
+                        <iconify-icon icon="tabler:search" class="fs-4 me-3"></iconify-icon>
+                    </button>
                 </form>
             </div>
         </div>
@@ -167,7 +169,7 @@
 </div>
 
 <header>
-    <div class="container py-2">
+    <div class="container py-0">
         <div class="row py-4 pb-0 pb-sm-4 align-items-center ">
 
             <div class="col-sm-4 col-lg-3 text-center text-sm-start">
@@ -182,11 +184,13 @@
                 <div class="search-bar border rounded-2 px-3 border-dark-subtle">
                     <form id="search-form" class="text-center d-flex align-items-center" action="{% url 'search' %}?query={{ query }}" method="get">
                         <input name="query" type="text" class="form-control border-0 bg-transparent"
-                               placeholder="Search products"/>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                            <path fill="currentColor"
+                               placeholder="Search"/>
+                        <button type="submit" class="btn border-0 bg-transparent p-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <path fill="currentColor"
                                   d="M21.71 20.29L18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a1 1 0 0 0 1.42 0a1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 7-7a7 7 0 0 1-7 7Z"/>
-                        </svg>
+                            </svg>
+                        </button>
                     </form>
                 </div>
             </div>
@@ -311,7 +315,7 @@
                             <a href="{% url 'login' %}" class="nav-link">Login</a>
                         </li>
                         <li class="nav-item">
-                            <a href="{% url 'index' %}" class="nav-link">Registration</a>
+                            <a href="{% url 'register' %}" class="nav-link">Registration</a>
                         </li>
                         {% endif %}
                     </ul>
@@ -322,7 +326,6 @@
                             <li>
                                 {{ user.get_username }}
                             </li>
-                            {% endif %}
                             <li>
                                 <a href="index.html" class="mx-3">
                                     <iconify-icon icon="healthicons:person" class="fs-4"></iconify-icon>
@@ -333,7 +336,7 @@
                                     <iconify-icon icon="mdi:heart" class="fs-4"></iconify-icon>
                                 </a>
                             </li>
-
+                            {% endif %}
                             <li class="">
                                 <a href="index.html" class="mx-3" data-bs-toggle="offcanvas"
                                    data-bs-target="#offcanvasCart"
@@ -357,41 +360,19 @@
 
     </div>
 </header>
-
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% elif message.tags == 'info' %}success{% endif %}" role="alert">
+                {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
 {% block content %}{% endblock %}
 
-<section id="register" style="background: url('{% static 'images/background-img.png' %}') no-repeat;">
-    <div class="container ">
-        <div class="row my-5 py-5">
-            <div class="offset-md-3 col-md-6 my-5 ">
-                <h2 class="display-3 fw-normal text-center">Get 20% Off on <span
-                        class="text-primary">first Purchase</span>
-                </h2>
-                <form>
-                    <div class="mb-3">
-                        <input type="email" class="form-control form-control-lg" name="email" id="email"
-                               placeholder="Enter Your Email Address">
-                    </div>
-                    <div class="mb-3">
-                        <input type="password" class="form-control form-control-lg" name="email" id="password1"
-                               placeholder="Create Password">
-                    </div>
-                    <div class="mb-3">
-                        <input type="password" class="form-control form-control-lg" name="email" id="password2"
-                               placeholder="Repeat Password">
-                    </div>
 
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-dark btn-lg rounded-1">Register it now</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</section>
 
 <section id="latest-blog" class="my-5">
-    <div class="container py-5 my-5">
+    <div class="container py-0 my-5">
         <div class="row mt-5">
             <div class="section-header d-md-flex justify-content-between align-items-center mb-3">
                 <h2 class="display-3 fw-normal">Latest Blog Post</h2>
@@ -486,7 +467,7 @@
 </section>
 
 <section id="service">
-    <div class="container py-5 my-5">
+    <div class="container py-0 my-5">
         <div class="row g-md-5 pt-4">
             <div class="col-md-3 my-3">
                 <div class="card">
@@ -538,7 +519,7 @@
 </section>
 
 <section id="insta" class="my-5">
-    <div class="row g-0 py-5">
+    <div class="row g-0 py-0">
         <div class="col instagram-item  text-center position-relative">
             <div class="icon-overlay d-flex justify-content-center position-absolute">
                 <iconify-icon class="text-white" icon="la:instagram"></iconify-icon>
@@ -591,7 +572,7 @@
 </section>
 
 <footer id="footer" class="my-5">
-    <div class="container py-5 my-5">
+    <div class="container py-0 my-5">
         <div class="row">
 
             <div class="col-md-3">
@@ -648,31 +629,31 @@
                             <a href="#" class="nav-link">Services</a>
                         </li>
                         <li class="menu-item">
-                            <a href="#" class="nav-link">Conatct Us</a>
+                            <a href="#" class="nav-link">Contact Us</a>
                         </li>
                     </ul>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="footer-menu">
-                    <h3>Help Center</h5>
-                        <ul class="menu-list list-unstyled">
-                            <li class="menu-item">
-                                <a href="#" class="nav-link">FAQs</a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="#" class="nav-link">Payment</a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="#" class="nav-link">Returns & Refunds</a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="#" class="nav-link">Checkout</a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="#" class="nav-link">Delivery Information</a>
-                            </li>
-                        </ul>
+                    <h3>Help Center</h3>
+                    <ul class="menu-list list-unstyled">
+                        <li class="menu-item">
+                            <a href="#" class="nav-link">FAQs</a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#" class="nav-link">Payment</a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#" class="nav-link">Returns & Refunds</a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#" class="nav-link">Checkout</a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="#" class="nav-link">Delivery Information</a>
+                        </li>
+                    </ul>
                 </div>
             </div>
             <div class="col-md-3">
