@@ -2,6 +2,7 @@
 
 {% block content %}
 {% load static %}
+{% load widget_tweaks %}
   {% if form.errors %}
   <div class="row my-2 py-0">
     <p>Login error, please try again!</p>
@@ -10,7 +11,7 @@
   {% if next %}
     {% if user.is_authenticated %}
     <div class="row my-2 py-0">
-      <p>You do not have access to this information. You need to log in.</p>
+      <p>You do not have access to this information. You need to logout.</p>
     </div>
     {% endif %}
   {% endif %}
@@ -20,20 +21,19 @@
             <div class="offset-md-3 col-md-6 my-5 ">
               <form method="post" action="{% url 'login' %}">
                 {% csrf_token %}
-                <table>
-                  <tr>
-                    <td>User: </td>
-                    <td>{{ form.username }}</td>
-                  </tr>
-                  <tr>
-                    <td>Password: </td>
-                    <td>{{ form.password }}</td>
-                  </tr>
-                </table>
-                <input type="submit" value="Login" />
+                <div class="mb-3">
+                  {{ form.username|add_class:"form-control form-control-lg"|attr:"placeholder:Enter Your Username" }}
+                </div>
+                <div class="mb-3">
+                    {{ form.password|add_class:"form-control form-control-lg"|attr:"placeholder:Enter Your Password" }}
+                </div>
+                <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-dark btn-lg rounded-1">Login now</button>
                 <input type="hidden" name="next" value="{{ next }}" />
+                </div>
               </form>
               <p><a href="{% url 'password_reset' %}">Forgot your password?</a></p>
+              </div>
             </div>
         </div>
     </div>
