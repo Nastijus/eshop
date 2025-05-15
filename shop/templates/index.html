@@ -75,7 +75,7 @@
 
         {% for category in categories %}
         <div class="col text-center">
-          <a href="#" class="categories-item">
+          <a href="{% url 'shop' %}?category={{ category.id }}" class="categories-item">
             <iconify-icon class="category-icon" icon="{{ category.logo }}"></iconify-icon>
             <h5>{{ category.category_name }}</h5>
           </a>
@@ -93,14 +93,13 @@
         <div class="section-header d-md-flex justify-content-between align-items-center mb-3">
           <h2 class="display-3 fw-normal">{{ category.category_name }}</h2>
           <div>
-            <a href="#" class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1">
+            <a href="{% url 'shop' %}?category={{ category.id }}" class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1 item {{ product.category.id }}" data-filter=".{{ category.id }}">
               shop now
               <svg width="24" height="24" viewBox="0 0 24 24" class="mb-1">
                 <use xlink:href="#arrow-right"></use>
               </svg></a>
           </div>
         </div>
-
 
           <div class="products-carousel swiper">
             <div class="swiper-wrapper">
@@ -112,8 +111,6 @@
             </div>
           </div>
 
-
-        <!-- / products-carousel -->
       </div>
     </section>
   {% endfor %}

@@ -13,7 +13,7 @@
     <meta name="author" content="">
     <meta name="keywords" content="">
     <meta name="description" content="">
-</head>
+
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"/>
 
@@ -157,8 +157,8 @@
                 Search
             </h4>
             <div class="search-bar border rounded-2 border-dark-subtle">
-                <form id="search-form" class="text-center d-flex align-items-center" action="{% url 'search' %}?query={{ query }}" method="get">
-                    <input name="query" type="text" class="form-control border-0 bg-transparent" placeholder="Search Here"/>
+                <form id="search-form" class="text-center d-flex align-items-center" action="{% url 'shop' %}" method="get">
+                    <input name="query" type="text" class="form-control border-0 bg-transparent" placeholder="Search Product" value="{{ query }}"/>
                     <button type="submit" class="btn border-0 bg-transparent p-0">
                         <iconify-icon icon="tabler:search" class="fs-4 me-3"></iconify-icon>
                     </button>
@@ -182,9 +182,9 @@
 
             <div class="col-sm-6 offset-sm-2 offset-md-0 col-lg-5 d-none d-lg-block">
                 <div class="search-bar border rounded-2 px-3 border-dark-subtle">
-                    <form id="search-form" class="text-center d-flex align-items-center" action="{% url 'search' %}?query={{ query }}" method="get">
+                    <form id="search-form" class="text-center d-flex align-items-center" action="{% url 'shop' %}" method="get">
                         <input name="query" type="text" class="form-control border-0 bg-transparent"
-                               placeholder="Search"/>
+                               placeholder="Search Product" value="{{ query }}"/>
                         <button type="submit" class="btn border-0 bg-transparent p-0">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                                 <path fill="currentColor"
@@ -226,8 +226,9 @@
                         </a>
                     </li>
                     <li>
-                        <a href="wishlist.html" class="mx-3">
+                        <a href="{% url 'my-wishlist' %}" class="mx-3">
                             <iconify-icon icon="mdi:heart" class="fs-4"></iconify-icon>
+                            <span class="position-absolute translate-middle badge rounded-circle bg-primary pt-2">{{ wishlist_count }}</span>
                         </a>
                     </li>
 
@@ -327,13 +328,14 @@
                                 {{ user.get_username }}
                             </li>
                             <li>
-                                <a href="index.html" class="mx-3">
+                                <a href="{% url 'customer_profile' %}" class="mx-3">
                                     <iconify-icon icon="healthicons:person" class="fs-4"></iconify-icon>
                                 </a>
                             </li>
                             <li>
-                                <a href="index.html" class="mx-3">
+                                <a href="{% url 'my-wishlist' %}" class="mx-3">
                                     <iconify-icon icon="mdi:heart" class="fs-4"></iconify-icon>
+                                    <span class="position-absolute translate-middle badge rounded-circle bg-primary pt-2">{{ wishlist_count }}</span>
                                 </a>
                             </li>
                             {% endif %}
@@ -360,15 +362,18 @@
 
     </div>
 </header>
-{% if messages %}
-    {% for message in messages %}
+<section id="messages" >
+    <div class="container py-0 my-5">
+    {% if messages %}
+        {% for message in messages %}
         <div class="alert alert-{% if message.tags == 'error' %}danger{% elif message.tags == 'info' %}success{% endif %}" role="alert">
                 {{ message }}
         </div>
-    {% endfor %}
-{% endif %}
-{% block content %}{% endblock %}
-
+        {% endfor %}
+    {% endif %}
+    {% block content %}{% endblock %}
+    </div>
+</section>
 
 
 <section id="latest-blog" class="my-5">

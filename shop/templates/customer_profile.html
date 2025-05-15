@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+  <section id="customer_profile_form" style="background: url('{% static 'images/background-img.png' %}') no-repeat;">
+    <div class="container ">
+        <div class="row my-2 py-0">
+            <div class="offset-md-3 col-md-6 my-5 ">
+              <form method="post" >
+                {% csrf_token %}
+                <div class="mb-3">
+                  {{ user_form.username|add_class:"form-control form-control-lg"|attr:"placeholder:Enter Your Username" }}
+                </div>
+                <div class="mb-3">
+                    {{ user_form.first_name|add_class:"form-control form-control-lg"|attr:"placeholder:Enter Your First Name" }}
+                </div>
+                <div class="mb-3">
+                    {{ user_form.last_name|add_class:"form-control form-control-lg"|attr:"placeholder:Enter Your Last Name" }}
+                </div>
+                <div class="mb-3">
+                    {{ user_form.email|add_class:"form-control form-control-lg"|attr:"placeholder:Enter Your Email" }}
+                </div>
+                <div class="mb-3">
+                    {{ customer_form.phone|add_class:"form-control form-control-lg"|attr:"placeholder:Enter Your Phone Number" }}
+                </div>
+                <div class="mb-3">
+                    {{ customer_form.address|add_class:"form-control form-control-lg"|attr:"placeholder:Enter Your Address" }}
+                </div>
+                <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-dark btn-lg rounded-1">Update</button>
+                <input type="hidden" name="next" value="{{ next }}" />
+                </div>
+              </form>
+              <p><a href="{% url 'password_reset' %}">Forgot your password?</a></p>
+              </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

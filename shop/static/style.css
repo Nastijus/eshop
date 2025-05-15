@@ -675,3 +675,34 @@ Single Product section style start
   background-color: var(--accent-color);
 }
 
+/*--------------------------------------------------------------
+Tooltip text style
+--------------------------------------------------------------*/
+  .btn-wishlist {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+  }
+
+.tooltip-text {
+    visibility: hidden;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 8px;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 1;
+    top: 120%; /* žemiau mygtuko */
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .btn-wishlist:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+
+

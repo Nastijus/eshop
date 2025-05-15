@@ -32,14 +32,14 @@ ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="", cast=Csv())
 # Application definition
 
 INSTALLED_APPS = [
-    'shop',
+    'shop.apps.ShopConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'widget_tweaks',
+    'widget_tweaks'
 ]
 
 MIDDLEWARE = [
