@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+  <h2 class="mb-4 text-center">Checkout</h2>
+
+  {% if cart_products %}
+    <table class="table table-bordered">
+      <thead class="table-light">
+        <tr>
+          <th>Product</th>
+          <th class="text-center">Quantity</th>
+          <th class="text-end">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in cart_products %}
+          <tr>
+            <td>{{ item.product.product_name }}</td>
+            <td class="text-center">{{ item.quantity }}</td>
+            <td class="text-end">{{ item.subtotal }} €</td>
+          </tr>
+        {% endfor %}
+        <tr class="fw-bold">
+          <td colspan="2" class="text-end">Total:</td>
+          <td class="text-end">{{ cart_total }} €</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="text-center">
+        <button type="submit" class="w-25 btn btn-primary btn-lg">Place Order</button>
+      </div>
+    </form>
+
+  {% else %}
+    <p class="text-center">Your cart is empty.</p>
+  {% endif %}
+</div>
+{% endblock %}

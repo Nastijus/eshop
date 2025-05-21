@@ -3,13 +3,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from django.views import generic
+from django.views import generic, View
 from django.views.decorators.csrf import csrf_protect
-from django.views.generic import DetailView
+from django.views.generic import DetailView, TemplateView
 from django.views.generic.edit import FormMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from shop.forms import ProductReviewForm, UserUpdateForm, CustomerUpdateForm
-from shop.models import Category, Product, Wishlist, Customer, ProductReview
+from shop.models import Category, Product, Wishlist, Customer, ProductReview, Order, OrderProduct
 from django.db.models import Q
 
 
@@ -29,17 +29,14 @@ def shop(request):
         products = products.filter(category__id=category_id)
     if request.user.is_authenticated:
         wishlist_products = request.user.customer.wishlist.values_list('product', flat=True)
-        wishlist_count = request.user.customer.wishlist.count()
     else:
         wishlist_products = []
-        wishlist_count = 0
 
     context = {
         'categories': categories,
         'products': products,
         'query': query if query else '',
         'wishlist_products': wishlist_products,
-        'wishlist_count': wishlist_count,
 
     }
     return render(request, 'shop.html', context=context)
@@ -83,7 +80,6 @@ class ProductDetailView(FormMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        product = self.object
 
         if self.request.user.is_authenticated:
             wishlist_products = self.request.user.customer.wishlist.values_list('product', flat=True)
@@ -94,6 +90,7 @@ class ProductDetailView(FormMixin, DetailView):
 
         context['wishlist_products'] = wishlist_products
         context['wishlist_count'] = wishlist_count
+        context['stars'] = [5,4,3,2,1]
 
         return context
 
@@ -157,15 +154,13 @@ class WishlistByUserListView(LoginRequiredMixin, generic.ListView):
 
         if self.request.user.is_authenticated:
             wishlist_products = self.request.user.customer.wishlist.values_list('product', flat=True)
-            wishlist_count = self.request.user.customer.wishlist.count()
-            wishlist_categories = Category.objects.filter(products__wishlist__customer__user=self.request.user).distinct()
+            wishlist_categories = Category.objects.filter(
+                products__wishlist__customer__user=self.request.user).distinct()
         else:
             wishlist_products = []
-            wishlist_count = 0
             wishlist_categories = []
 
         context['wishlist_products'] = wishlist_products
-        context['wishlist_count'] = wishlist_count
         context['wishlist_categories'] = wishlist_categories
 
         return context
@@ -183,3 +178,91 @@ def toggle_wishlist(request, product_id):
     else:
         messages.success(request, 'Product added to wishlist.')
     return redirect(request.META.get('HTTP_REFERER', 'shop'))
+
+
+class AddToCartView(View):
+    def post(self, request):
+        product_id = request.POST.get('product_id')
+        quantity = int(request.POST.get('quantity', 1))
+
+        product = Product.objects.filter(id=product_id).first()
+        if not product:
+            return redirect('index')
+
+        if request.user.is_authenticated:
+            customer = Customer.objects.get(user=request.user)
+            order, created = Order.objects.get_or_create(customer=customer, status='cart')
+            order_product, created = OrderProduct.objects.get_or_create(order=order, product=product)
+            if created:
+                order_product.quantity = quantity
+            else:
+                order_product.quantity += quantity
+            order_product.save()
+        else:
+            cart = request.session.get('cart', {})
+            cart[str(product_id)] = cart.get(str(product_id), 0) + quantity
+            request.session['cart'] = cart
+
+        return redirect(request.META.get('HTTP_REFERER', 'shop'))
+
+
+class UpdateCartView(View):
+    def post(self, request):
+        product_id = request.POST.get('product_id')
+        action = request.POST.get('action')
+        cart_open = request.POST.get('cart_open')
+
+        if request.user.is_authenticated:
+            customer = Customer.objects.get(user=request.user)
+            order = Order.objects.get(customer=customer, status='cart')
+            product = OrderProduct.objects.filter(order=order, product_id=product_id).first()
+
+            if product:
+                if action == 'plus':
+                    product.quantity += 1
+                    product.save()
+                elif action == 'minus':
+                    product.quantity -= 1
+                    product.save()
+                    if product.quantity <= 0:
+                        product.delete()
+        else:
+            cart = request.session.get('cart', {})
+            if product_id in cart:
+                if action == 'plus':
+                    cart[product_id] += 1
+                elif action == 'minus':
+                    cart[product_id] -= 1
+                    if cart[product_id] <= 0:
+                        del cart[product_id]
+            request.session['cart'] = cart
+
+        redirect_url = '/'
+        if cart_open:
+            redirect_url += '?cart_open=1'
+
+        return redirect(redirect_url)
+
+
+class CheckoutView(TemplateView):
+    template_name = 'checkout.html'
+
+    def post(self, request):
+        cart = request.session.get('cart', {})
+        if not cart:
+            return redirect('index')
+
+        if request.user.is_authenticated:
+            customer = Customer.objects.get(user=request.user)
+        else:
+            customer = Customer.objects.create(user=None)
+
+        order = Order.objects.create(customer=customer, status='payment')
+        products = Product.objects.filter(id__in=cart.keys())
+
+        for product in products:
+            quantity = cart.get(str(product.id), 1)
+            OrderProduct.objects.create(order=order, product=product, quantity=quantity)
+
+        request.session['cart'] = {}
+        return redirect('order_success', order_id=order.id)

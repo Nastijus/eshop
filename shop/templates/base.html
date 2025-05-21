@@ -10,9 +10,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="author" content="">
-    <meta name="keywords" content="">
-    <meta name="description" content="">
+    <meta name="author" content="Justinas Rupeika">
+    <meta name="keywords" content="electronics, smartphones, laptops, tablets, buy online, Electry">
+    <meta name="description" content="Electry is your trusted online electronics store. Find the best deals on smartphones, laptops, and more.">
 
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"/>
@@ -102,7 +102,7 @@
     </div>
 </div>
 
-<div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasCart" aria-labelledby="My Cart">
+<div class="offcanvas offcanvas-end {% if cart_open %}show{% endif %}" data-bs-scroll="true"  tabindex="-1" id="offcanvasCart" aria-labelledby="My Cart" {% if cart_open %}style="visibility: visible;"{% endif %}>
     <div class="offcanvas-header justify-content-center">
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
@@ -110,37 +110,42 @@
         <div class="order-md-last">
             <h4 class="d-flex justify-content-between align-items-center mb-3">
                 <span class="text-primary">Your cart</span>
-                <span class="badge bg-primary rounded-circle pt-2">5</span>
+                <span class="badge bg-primary rounded-circle pt-2"></span>
             </h4>
-            <ul class="list-group mb-3">
+            <ul class="list-group mb-3" >
+                {% for product in cart_products %}
                 <li class="list-group-item d-flex justify-content-between lh-sm">
                     <div>
-                        <h6 class="my-0">Grey Hoodie</h6>
-                        <small class="text-body-secondary">Brief description</small>
+                        <h6 class="my-0">{{ product.product.product_name }}</h6>
+                        <small class="text-body-secondary">From category {{ product.product.category.category_name }}</small>
                     </div>
-                    <span class="text-body-secondary">$12</span>
+                    <span class="text-body-secondary badge rounded-circle  pt-2">
+                            <form method="post" action="{% url 'update_cart' %}" style="display:inline;">
+                              {% csrf_token %}
+                              <input type="hidden" name="product_id" value="{{ product.product.id }}">
+                              <input type="hidden" name="action" value="minus">
+                              <input type="hidden" name="cart_open" value="1">
+                              <button type="submit">−</button>
+                            </form>
+                            {{ product.quantity }}
+                            <form method="post" action="{% url 'update_cart' %}" style="display:inline;">
+                              {% csrf_token %}
+                              <input type="hidden" name="product_id" value="{{ product.product.id }}">
+                              <input type="hidden" name="action" value="plus">
+                              <input type="hidden" name="cart_open" value="1">
+                              <button type="submit">+</button>
+                            </form>
+                    </span>
+                    <span class="text-body-secondary">{{ product.subtotal }}</span>
                 </li>
-                <li class="list-group-item d-flex justify-content-between lh-sm">
-                    <div>
-                        <h6 class="my-0">Dog Food</h6>
-                        <small class="text-body-secondary">Brief description</small>
-                    </div>
-                    <span class="text-body-secondary">$8</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between lh-sm">
-                    <div>
-                        <h6 class="my-0">Soft Toy</h6>
-                        <small class="text-body-secondary">Brief description</small>
-                    </div>
-                    <span class="text-body-secondary">$5</span>
-                </li>
+                {% endfor %}
                 <li class="list-group-item d-flex justify-content-between">
-                    <span class="fw-bold">Total (USD)</span>
-                    <strong>$20</strong>
+                    <span class="fw-bold">Total (EUR)</span>
+                    <strong>{{ cart_total }}</strong>
                 </li>
             </ul>
 
-            <button class="w-100 btn btn-primary btn-lg" type="submit">Continue to checkout</button>
+            <a href="{% url 'checkout' %}" class="w-100 btn btn-primary btn-lg">Continue to checkout</a>
         </div>
     </div>
 </div>
@@ -195,8 +200,7 @@
                 </div>
             </div>
 
-            <div
-                    class="col-sm-8 col-lg-4 d-flex justify-content-end gap-5 align-items-center mt-4 mt-sm-0 justify-content-center justify-content-sm-end">
+            <div class="col-sm-8 col-lg-4 d-flex justify-content-end gap-5 align-items-center mt-4 mt-sm-0 justify-content-center justify-content-sm-end">
                 <div class="support-box text-end d-none d-xl-block">
                     <span class="fs-6 secondary-font text-muted">Phone</span>
                     <h5 class="mb-0">+370-60123456</h5>
@@ -205,8 +209,6 @@
                     <span class="fs-6 secondary-font text-muted">Email</span>
                     <h5 class="mb-0">electry@store.com</h5>
                 </div>
-
-
             </div>
         </div>
     </div>
@@ -236,7 +238,7 @@
                         <a href="#" class="mx-3" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart"
                            aria-controls="offcanvasCart">
                             <iconify-icon icon="mdi:cart" class="fs-4 position-relative"></iconify-icon>
-                            <span class="position-absolute translate-middle badge rounded-circle bg-primary pt-2">03</span>
+                            <span class="position-absolute translate-middle badge rounded-circle bg-primary pt-2">{{ cart_count }}</span>
                         </a>
                     </li>
 
@@ -264,45 +266,23 @@
                 </div>
 
                 <div class="offcanvas-body justify-content-between">
-                    <select class="filter-categories border-0 mb-0 me-5">
-                        <option>Shop by Category</option>
-                        {% for category in categories %}
-                        <option>{{ category.category_name }}</option>
-                        {% endfor %}
-                    </select>
 
-                    <ul class="navbar-nav menu-list list-unstyled d-flex gap-md-3 mb-0">
+                    <ul class="navbar-nav menu-list list-unstyled d-flex gap-md-3 mb-0 mx-auto">
                         <li class="nav-item">
                             <a href="{% url 'index' %}" class="nav-link active">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'shop' %}" class="nav-link">Shop</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" role="button" id="pages" data-bs-toggle="dropdown"
                                aria-expanded="false">Pages</a>
                             <ul class="dropdown-menu" aria-labelledby="pages">
-                                <li><a href="index.html" class="dropdown-item">About Us</a></li>
-                                <li><a href="index.html" class="dropdown-item">Shop</a></li>
-                                <li><a href="index.html" class="dropdown-item">Single Product</a></li>
                                 <li><a href="index.html" class="dropdown-item">Cart</a></li>
                                 <li><a href="index.html" class="dropdown-item">My Wish list</a></li>
                                 <li><a href="index.html" class="dropdown-item">Checkout</a></li>
-                                <li><a href="index.html" class="dropdown-item">Blog</a></li>
-                                <li><a href="index.html" class="dropdown-item">Single Post</a></li>
-                                <li><a href="index.html" class="dropdown-item">Contact</a></li>
-                                <li><a href="index.html" class="dropdown-item">FAQs</a></li>
                                 <li><a href="index.html" class="dropdown-item">Account</a></li>
-                                <li><a href="index.html" class="dropdown-item">Thankyou</a></li>
-                                <li><a href="index.html" class="dropdown-item">Error 404</a></li>
-                                <li><a href="index.html" class="dropdown-item">Styles</a></li>
                             </ul>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{% url 'shop' %}" class="nav-link">Shop</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{% url 'index' %}" class="nav-link">Blog</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{% url 'index' %}" class="nav-link">Contact</a>
                         </li>
                         {% if user.is_authenticated %}
                         <li class="nav-item">
@@ -345,8 +325,8 @@
                                    aria-controls="offcanvasCart">
                                     <iconify-icon icon="mdi:cart" class="fs-4 position-relative"></iconify-icon>
                                     <span class="position-absolute translate-middle badge rounded-circle bg-primary pt-2">
-                      03
-                    </span>
+                                        {{ cart_count }}
+                                    </span>
                                 </a>
                             </li>
                         </ul>
@@ -375,102 +355,6 @@
     </div>
 </section>
 
-
-<section id="latest-blog" class="my-5">
-    <div class="container py-0 my-5">
-        <div class="row mt-5">
-            <div class="section-header d-md-flex justify-content-between align-items-center mb-3">
-                <h2 class="display-3 fw-normal">Latest Blog Post</h2>
-                <div>
-                    <a href="#" class="btn btn-outline-dark btn-lg text-uppercase fs-6 rounded-1">
-                        Read all
-                        <svg width="24" height="24" viewBox="0 0 24 24" class="mb-1">
-                            <use xlink:href="#arrow-right"></use>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4 my-4 my-md-0">
-                <div class="z-1 position-absolute rounded-3 m-2 px-3 pt-1 bg-light">
-                    <h3 class="secondary-font text-primary m-0">20</h3>
-                    <p class="secondary-font fs-6 m-0">Feb</p>
-
-                </div>
-                <div class="card position-relative">
-                    <a href="single-post.html"><img src="{% static 'images/blog1.jpg' %}" class="img-fluid rounded-4"
-                                                    alt="image"></a>
-                    <div class="card-body p-0">
-                        <a href="single-post.html">
-                            <h3 class="card-title pt-4 pb-3 m-0">10 Reasons to be helpful towards any animals</h3>
-                        </a>
-
-                        <div class="card-text">
-                            <p class="blog-paragraph fs-6">At the core of our practice is the idea that cities are the
-                                incubators of
-                                our greatest
-                                achievements, and the best hope for a sustainable future.</p>
-                            <a href="single-post.html" class="blog-read">read more</a>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 my-4 my-md-0">
-                <div class="z-1 position-absolute rounded-3 m-2 px-3 pt-1 bg-light">
-                    <h3 class="secondary-font text-primary m-0">21</h3>
-                    <p class="secondary-font fs-6 m-0">Feb</p>
-
-                </div>
-                <div class="card position-relative">
-                    <a href="single-post.html"><img src="{% static 'images/blog2.jpg' %}" class="img-fluid rounded-4"
-                                                    alt="image"></a>
-                    <div class="card-body p-0">
-                        <a href="single-post.html">
-                            <h3 class="card-title pt-4 pb-3 m-0">How to know your pet is hungry</h3>
-                        </a>
-
-                        <div class="card-text">
-                            <p class="blog-paragraph fs-6">At the core of our practice is the idea that cities are the
-                                incubators of
-                                our greatest
-                                achievements, and the best hope for a sustainable future.</p>
-                            <a href="single-post.html" class="blog-read">read more</a>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 my-4 my-md-0">
-                <div class="z-1 position-absolute rounded-3 m-2 px-3 pt-1 bg-light">
-                    <h3 class="secondary-font text-primary m-0">22</h3>
-                    <p class="secondary-font fs-6 m-0">Feb</p>
-
-                </div>
-                <div class="card position-relative">
-                    <a href="single-post.html"><img src="{% static 'images/blog3.jpg' %}" class="img-fluid rounded-4"
-                                                    alt="image"></a>
-                    <div class="card-body p-0">
-                        <a href="single-post.html">
-                            <h3 class="card-title pt-4 pb-3 m-0">Best home for your pets</h3>
-                        </a>
-
-                        <div class="card-text">
-                            <p class="blog-paragraph fs-6">At the core of our practice is the idea that cities are the
-                                incubators of
-                                our greatest
-                                achievements, and the best hope for a sustainable future.</p>
-                            <a href="single-post.html" class="blog-read">read more</a>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
 <section id="service">
     <div class="container py-0 my-5">
         <div class="row g-md-5 pt-4">
@@ -481,7 +365,10 @@
                     </div>
                     <h3 class="card-title py-2 m-0">Free Delivery</h3>
                     <div class="card-text">
-                        <p class="blog-paragraph fs-6">Lorem ipsum dolor sit amet, consectetur adipi elit.</p>
+                        <p class="blog-paragraph fs-6">
+                            We offer free delivery on all orders – no hidden fees, no minimum purchase.
+                            Just great products delivered straight to your doorstep!
+                        </p>
                     </div>
                 </div>
             </div>
@@ -492,7 +379,10 @@
                     </div>
                     <h3 class="card-title py-2 m-0">100% secure payment</h3>
                     <div class="card-text">
-                        <p class="blog-paragraph fs-6">Lorem ipsum dolor sit amet, consectetur adipi elit.</p>
+                        <p class="blog-paragraph fs-6">
+                            Enjoy peace of mind with every purchase.
+                            Our platform uses trusted payment gateways to guarantee 100% secure transactions.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -503,7 +393,10 @@
                     </div>
                     <h3 class="card-title py-2 m-0">Daily Offer</h3>
                     <div class="card-text">
-                        <p class="blog-paragraph fs-6">Lorem ipsum dolor sit amet, consectetur adipi elit.</p>
+                        <p class="blog-paragraph fs-6">
+                            Every day brings new savings with our Daily Offers.
+                            Browse now and grab the best electronics deals while they last!
+                        </p>
                     </div>
                 </div>
             </div>
@@ -514,7 +407,10 @@
                     </div>
                     <h3 class="card-title py-2 m-0">Quality guarantee</h3>
                     <div class="card-text">
-                        <p class="blog-paragraph fs-6">Lorem ipsum dolor sit amet, consectetur adipi elit.</p>
+                        <p class="blog-paragraph fs-6">
+                            We carefully select every item to meet strict quality standards.
+                            That’s our promise – and our guarantee.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -523,58 +419,22 @@
     </div>
 </section>
 
+{% if random_products %}
 <section id="insta" class="my-5">
     <div class="row g-0 py-0">
+        {% for product in random_products %}
         <div class="col instagram-item  text-center position-relative">
+            <a href="{% url 'product' product.id %}">
             <div class="icon-overlay d-flex justify-content-center position-absolute">
-                <iconify-icon class="text-white" icon="la:instagram"></iconify-icon>
+                <iconify-icon class="text-white" icon="fluent:search-12-regular"></iconify-icon>
             </div>
-            <a href="#">
-                <img src="{% static 'images/insta1.jpg' %}" alt="insta-img" class="img-fluid rounded-3">
+            <img src="{{ product.image.url }}" alt="{{ product.product_name }}" class="img-fluid rounded-3">
             </a>
         </div>
-        <div class="col instagram-item  text-center position-relative">
-            <div class="icon-overlay d-flex justify-content-center position-absolute">
-                <iconify-icon class="text-white" icon="la:instagram"></iconify-icon>
-            </div>
-            <a href="#">
-                <img src="{% static 'images/insta2.jpg' %}" alt="insta-img" class="img-fluid rounded-3">
-            </a>
-        </div>
-        <div class="col instagram-item  text-center position-relative">
-            <div class="icon-overlay d-flex justify-content-center position-absolute">
-                <iconify-icon class="text-white" icon="la:instagram"></iconify-icon>
-            </div>
-            <a href="#">
-                <img src="{% static 'images/insta3.jpg' %}" alt="insta-img" class="img-fluid rounded-3">
-            </a>
-        </div>
-        <div class="col instagram-item  text-center position-relative">
-            <div class="icon-overlay d-flex justify-content-center position-absolute">
-                <iconify-icon class="text-white" icon="la:instagram"></iconify-icon>
-            </div>
-            <a href="#">
-                <img src="{% static 'images/insta4.jpg' %}" alt="insta-img" class="img-fluid rounded-3">
-            </a>
-        </div>
-        <div class="col instagram-item  text-center position-relative">
-            <div class="icon-overlay d-flex justify-content-center position-absolute">
-                <iconify-icon class="text-white" icon="la:instagram"></iconify-icon>
-            </div>
-            <a href="#">
-                <img src="{% static 'images/insta5.jpg' %}" alt="insta-img" class="img-fluid rounded-3">
-            </a>
-        </div>
-        <div class="col instagram-item  text-center position-relative">
-            <div class="icon-overlay d-flex justify-content-center position-absolute">
-                <iconify-icon class="text-white" icon="la:instagram"></iconify-icon>
-            </div>
-            <a href="#">
-                <img src="{% static 'images/insta6.jpg' %}" alt="insta-img" class="img-fluid rounded-3">
-            </a>
-        </div>
+        {% endfor %}
     </div>
 </section>
+{% endif %}
 
 <footer id="footer" class="my-5">
     <div class="container py-0 my-5">

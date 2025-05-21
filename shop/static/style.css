@@ -413,6 +413,8 @@ a.categories-item:hover iconify-icon.category-icon {
   border: none;
 }
 
+
+
 a.btn-cart {
   border-radius: 0.25rem;
   border: 1px solid rgba(65, 64, 62, 0.20);
@@ -678,7 +680,7 @@ Single Product section style start
 /*--------------------------------------------------------------
 Tooltip text style
 --------------------------------------------------------------*/
-  .btn-wishlist {
+  .btn-add {
     position: relative;
     display: inline-block;
     cursor: pointer;
@@ -693,7 +695,7 @@ Tooltip text style
     border-radius: 6px;
     position: absolute;
     z-index: 1;
-    top: 120%; /* žemiau mygtuko */
+    top: 120%;
     left: 50%;
     transform: translateX(-50%);
     white-space: nowrap;
@@ -701,7 +703,7 @@ Tooltip text style
     transition: opacity 0.3s;
   }
 
-  .btn-wishlist:hover .tooltip-text {
+  .btn-add:hover .tooltip-text {
     visibility: visible;
     opacity: 1;
 
