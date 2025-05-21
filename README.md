@@ -19,7 +19,6 @@ This project includes all the essential e-commerce functionality: product listin
 - ✅ Add/remove items from shopping cart
 - ✅ User registration and login system
 - ✅ Guest and authenticated checkout options
-- ✅ Save shipping addresses for logged-in users
 - ✅ Order management with status tracking
 - ✅ Admin panel for managing products
 - ✅ Responsive Bootstrap 5 design
