@@ -41,5 +41,4 @@ This project includes all the essential e-commerce functionality: product listin
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/Nastijus/electry.git
-   cd electry
+   git clone https://github.com/Nastijus/eshop.git
