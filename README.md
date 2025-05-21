@@ -41,5 +41,5 @@ This project includes all the essential e-commerce functionality: product listin
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/electry.git
+   git clone https://github.com/Nastijus/electry.git
    cd electry
