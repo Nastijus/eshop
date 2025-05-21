@@ -1,6 +1,6 @@
 from django.urls import path
 from shop import views
-from shop.views import AddToCartView, UpdateCartView, ClearCartView, CheckoutView
+from shop.views import AddToCartView, UpdateCartView, CheckoutView
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -12,6 +12,5 @@ urlpatterns = [
     path('wishlist/toggle/<int:product_id>/', views.toggle_wishlist, name='toggle_wishlist'),
     path('update_cart/', UpdateCartView.as_view(), name='update_cart'),
     path('add_to_cart/', AddToCartView.as_view(), name='add_to_cart'),
-    path('clear_cart/', ClearCartView.as_view(), name='clear_cart'),
     path('checkout/', CheckoutView.as_view(), name='checkout'),
 ]

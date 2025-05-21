@@ -278,10 +278,9 @@
                             <a class="nav-link dropdown-toggle" role="button" id="pages" data-bs-toggle="dropdown"
                                aria-expanded="false">Pages</a>
                             <ul class="dropdown-menu" aria-labelledby="pages">
-                                <li><a href="index.html" class="dropdown-item">Cart</a></li>
-                                <li><a href="index.html" class="dropdown-item">My Wish list</a></li>
-                                <li><a href="index.html" class="dropdown-item">Checkout</a></li>
-                                <li><a href="index.html" class="dropdown-item">Account</a></li>
+                                <li><a href="{% url 'my-wishlist' %}" class="dropdown-item">My Wish list</a></li>
+                                <li><a href="{% url 'checkout' %}" class="dropdown-item">Checkout</a></li>
+                                <li><a href="{% url 'customer_profile' %}" class="dropdown-item">My profile</a></li>
                             </ul>
                         </li>
                         {% if user.is_authenticated %}
